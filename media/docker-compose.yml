@@ -65,3 +65,48 @@ services:
     ports:
       - 9696:9696        # Prowlarr web UI — access at http://vm-ip:9696
     restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=3000
+      - PGID=3000
+      - TZ=America/New_York
+    volumes:
+      - ./config/sonarr:/config
+      - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
+      - /mnt/truenas/Files/10 - Downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=3000
+      - PGID=3000
+      - TZ=America/New_York
+    volumes:
+      - ./config/radarr:/config
+      - /mnt/truenas/Files/04 - Anime/04 - Movies:/movies
+      - /mnt/truenas/Files/10 - Downloads:/downloads
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=3000
+      - PGID=3000
+      - TZ=America/New_York
+    volumes:
+      - ./config/bazarr:/config
+      - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
+      - /mnt/truenas/Files/04 - Anime/04 - Movies:/movies
+    ports:
+      - 6767:6767
+    restart: unless-stopped

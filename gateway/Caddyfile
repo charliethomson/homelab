@@ -60,6 +60,30 @@ prowlarr.dev.lan.thmsn.dev, prowlarr.dev.vpn.thmsn.dev {
     reverse_proxy localhost:9696
 }
 
+sonarr.dev.lan.thmsn.dev, sonarr.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:8989
+}
+
+radarr.dev.lan.thmsn.dev, radarr.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:7878
+}
+
+bazarr.dev.lan.thmsn.dev, bazarr.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:6767
+}
+
 qbit.dev.lan.thmsn.dev, qbit.dev.vpn.thmsn.dev {
     tls {
         dns cloudflare {env.CF_API_TOKEN}
