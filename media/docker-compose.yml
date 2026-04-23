@@ -23,6 +23,7 @@ services:
       - PGID=3000
       - TZ=America/New_York
       - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
     volumes:
       - ./config/qbittorrent:/config
       - /mnt/truenas/Files/10 - Downloads:/downloads
