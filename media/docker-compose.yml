@@ -1,0 +1,67 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - SERVER_COUNTRIES=United States
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=3000
+      - PGID=3000
+      - TZ=America/New_York
+      - WEBUI_PORT=8080
+    volumes:
+      - ./config/qbittorrent:/config
+      - /mnt/truenas/Files/10 - Downloads:/downloads
+    network_mode: "service:gluetun"  # routes ALL qbittorrent traffic through VPN
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+    ports:
+      - 8191:8191
+    restart: unless-stopped
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=3000        # UID of the user that owns your music files on the NFS share
+      - PGID=3000        # GID to match — check with `id` on the VM or `ls -ln` on the share
+      - TZ=America/New_York
+    volumes:
+      - ./config/lidarr:/config          # Lidarr's database, settings, logs — persists on the VM
+      - /mnt/truenas/Files/08 - Music:/music  # Your NFS-mounted library — adjust path to match your share
+      - /mnt/truenas/Files/10 - Downloads:/downloads  # Where completed downloads land before Lidarr moves them
+    ports:
+      - 8686:8686        # Lidarr web UI — access at http://vm-ip:8686
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=3000
+      - PGID=3000
+      - TZ=America/New_York
+    volumes:
+      - ./config/prowlarr:/config        # Prowlarr's indexer configs and settings
+    ports:
+      - 9696:9696        # Prowlarr web UI — access at http://vm-ip:9696
+    restart: unless-stopped
