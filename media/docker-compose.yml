@@ -1,3 +1,14 @@
+x-arr-env: &arr-env
+  PUID: "3000"
+  PGID: "3000"
+  TZ: America/New_York
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   gluetun:
     image: qmcgaw/gluetun:latest
@@ -5,75 +16,82 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - VPN_SERVICE_PROVIDER=protonvpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - SERVER_COUNTRIES=United States
+      VPN_SERVICE_PROVIDER: protonvpn
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+      SERVER_COUNTRIES: United States
     ports:
       - 8080:8080
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    logging: *logging
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
-      - PUID=3000
-      - PGID=3000
-      - TZ=America/New_York
-      - WEBUI_PORT=8080
-      - TORRENTING_PORT=6881
+      <<: *arr-env
+      WEBUI_PORT: "8080"
+      TORRENTING_PORT: "6881"
     volumes:
       - ./config/qbittorrent:/config
       - /mnt/truenas/Files/10 - Downloads:/downloads
-    network_mode: "service:gluetun"  # routes ALL qbittorrent traffic through VPN
+    network_mode: "service:gluetun"
     depends_on:
-      - gluetun
+      gluetun:
+        condition: service_healthy
     restart: unless-stopped
+    logging: *logging
+
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
     environment:
-      - LOG_LEVEL=info
+      LOG_LEVEL: info
+      TZ: America/New_York
     ports:
       - 8191:8191
     restart: unless-stopped
+    logging: *logging
+
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
     environment:
-      - PUID=3000        # UID of the user that owns your music files on the NFS share
-      - PGID=3000        # GID to match — check with `id` on the VM or `ls -ln` on the share
-      - TZ=America/New_York
+      <<: *arr-env
     volumes:
-      - ./config/lidarr:/config          # Lidarr's database, settings, logs — persists on the VM
-      - /mnt/truenas/Files/08 - Music:/music  # Your NFS-mounted library — adjust path to match your share
-      - /mnt/truenas/Files/10 - Downloads:/downloads  # Where completed downloads land before Lidarr moves them
+      - ./config/lidarr:/config
+      - /mnt/truenas/Files/08 - Music:/music
+      - /mnt/truenas/Files/10 - Downloads:/downloads
     ports:
-      - 8686:8686        # Lidarr web UI — access at http://vm-ip:8686
+      - 8686:8686
     restart: unless-stopped
+    logging: *logging
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
-      - PUID=3000
-      - PGID=3000
-      - TZ=America/New_York
+      <<: *arr-env
     volumes:
-      - ./config/prowlarr:/config        # Prowlarr's indexer configs and settings
+      - ./config/prowlarr:/config
     ports:
-      - 9696:9696        # Prowlarr web UI — access at http://vm-ip:9696
+      - 9696:9696
     restart: unless-stopped
+    logging: *logging
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
-      - PUID=3000
-      - PGID=3000
-      - TZ=America/New_York
+      <<: *arr-env
     volumes:
       - ./config/sonarr:/config
       - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
@@ -81,14 +99,13 @@ services:
     ports:
       - 8989:8989
     restart: unless-stopped
+    logging: *logging
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
-      - PUID=3000
-      - PGID=3000
-      - TZ=America/New_York
+      <<: *arr-env
     volumes:
       - ./config/radarr:/config
       - /mnt/truenas/Files/04 - Anime/04 - Movies:/movies
@@ -96,14 +113,13 @@ services:
     ports:
       - 7878:7878
     restart: unless-stopped
+    logging: *logging
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
     environment:
-      - PUID=3000
-      - PGID=3000
-      - TZ=America/New_York
+      <<: *arr-env
     volumes:
       - ./config/bazarr:/config
       - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
@@ -111,3 +127,4 @@ services:
     ports:
       - 6767:6767
     restart: unless-stopped
+    logging: *logging
