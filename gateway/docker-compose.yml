@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  caddy:
+    build: .
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ../public/:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    network_mode: host  # Required to access services on localhost
+    env_file:
+      - .env
+
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local

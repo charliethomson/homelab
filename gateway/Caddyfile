@@ -1,0 +1,105 @@
+{
+    admin 0.0.0.0:2019
+    acme_dns cloudflare {env.CF_API_TOKEN}
+}
+
+dev.lan.thmsn.dev, dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+	resolvers 1.1.1.1 8.8.8.8
+    }
+
+    handle_path /api/cobalt* {
+        reverse_proxy localhost:9000
+    }
+
+    handle /management/monitoring* {
+        uri strip_prefix /management/monitoring
+        reverse_proxy localhost:3000
+    }
+
+    handle /* {
+        root * /srv
+        file_server
+    }
+}
+
+portainer.dev.lan.thmsn.dev, portainer.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy https://localhost:9443 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+vocard.dev.lan.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:8003
+}
+
+lidarr.dev.lan.thmsn.dev, lidarr.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:8686
+}
+
+prowlarr.dev.lan.thmsn.dev, prowlarr.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:9696
+}
+
+qbit.dev.lan.thmsn.dev, qbit.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:8080
+}
+
+nas.dev.lan.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy 192.168.0.228:80
+}
+
+minio.nas.dev.lan.thmsn.dev {
+    tls {
+	dns cloudflare {env.CF_API_TOKEN}
+	resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy 192.168.0.228:9002
+}
+
+jellyfin.nas.dev.lan.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy 192.168.0.228:30013
+}
+
+prox.dev.lan.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy https://prox.lan.thmsn.dev:8006 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
