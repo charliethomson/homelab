@@ -13,14 +13,13 @@ wait_for() {
     url=$2
     key=$3
     elapsed=0
-    printf 'Waiting for %s' "$name"
     until curl -sf -H "X-Api-Key: $key" "$url/api/v1/system/status" >/dev/null 2>&1; do
-        [ "$elapsed" -ge "$MAX_WAIT" ] && { echo " timed out" >&2; exit 1; }
-        printf '.'
+        [ "$elapsed" -ge "$MAX_WAIT" ] && { echo "$name: timed out" >&2; exit 1; }
+        echo "$name: not ready, retrying in 3s (${elapsed}s elapsed)"
         sleep 3
         elapsed=$((elapsed + 3))
     done
-    echo " ready"
+    echo "$name: ready"
 }
 
 prowlarr_add_app() {

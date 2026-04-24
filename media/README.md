@@ -74,7 +74,7 @@ PROWLARR_API_KEY=<random UUID>
 
 To get a WireGuard key from ProtonVPN: log in to proton.me → VPN → Downloads → WireGuard configuration → generate a config for a US server and copy the `PrivateKey` value.
 
-Generate API keys with `openssl rand -hex 32`. These values are written into each app's config on every startup, so inter-service connections never break across container recreations.
+Generate API keys with `openssl rand -hex 16`. These values are written into each app's config on every startup, so inter-service connections never break across container recreations.
 
 ### 2. Start the stack
 
