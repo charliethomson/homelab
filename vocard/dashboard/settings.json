@@ -1,0 +1,19 @@
+{
+    "host": "0.0.0.0",
+    "port": 8003,
+    "password": "${DASHBOARD_IPC_PASSWORD}",
+    "client_id": "${DISCORD_CLIENT_ID}",
+    "client_secret_id": "${DISCORD_CLIENT_SECRET}",
+    "secret_key": "${DASHBOARD_SECRET_KEY}",
+    "redirect_url": "https://vocard.dev.lan.thmsn.dev/callback",
+    "logging": {
+        "file": {
+            "path": "./logs",
+            "enable": true
+        },
+        "level": {
+            "dashboard": "INFO"
+        },
+        "max_history": 30
+    }
+}

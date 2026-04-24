@@ -1,0 +1,125 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+name: vocard
+
+networks:
+  vocard:
+    name: vocard
+
+services:
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:dev
+    container_name: lavalink
+    restart: unless-stopped
+    environment:
+      - SERVER_PORT=2333
+      - LAVALINK_SERVER_PASSWORD=${LAVALINK_PASSWORD}
+    expose:
+      - 2333
+    volumes:
+      - ./live/lavalink/application.yml:/opt/Lavalink/application.yml
+      - ./lavalink/plugins:/opt/Lavalink/plugins
+      - ./lavalink/logs:/opt/Lavalink/logs
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "--header=Authorization: ${LAVALINK_PASSWORD}", "http://localhost:2333/v4/info"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - vocard
+    logging: *logging
+
+  spotify-tokener:
+    image: ghcr.io/topi314/spotify-tokener:master
+    container_name: spotify-tokener
+    restart: unless-stopped
+    environment:
+      - SPOTIFY_TOKENER_ADDR=0.0.0.0:49152
+    expose:
+      - 49152
+    healthcheck:
+      test: nc -z -v localhost 49152
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vocard
+    logging: *logging
+
+  yt-cipher:
+    image: ghcr.io/kikkia/yt-cipher:master
+    container_name: yt-cipher
+    restart: unless-stopped
+    expose:
+      - 8001
+    networks:
+      - vocard
+    logging: *logging
+
+  vocard-db:
+    image: mongo:8
+    container_name: vocard-db
+    restart: unless-stopped
+    command:
+      - mongod
+      - --oplogSize=1024
+      - --wiredTigerCacheSizeGB=1
+      - --auth
+      - --noscripting
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    expose:
+      - 27017
+    volumes:
+      - ./mongodb_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - vocard
+    logging: *logging
+
+  vocard-dashboard:
+    image: ghcr.io/chocomeow/vocard-dashboard:latest
+    container_name: vocard-dashboard
+    restart: unless-stopped
+    ports:
+      - 8003:8003
+    volumes:
+      - ./live/dashboard/settings.json:/app/settings.json
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - vocard
+    logging: *logging
+
+  vocard:
+    image: ghcr.io/chocomeow/vocard:beta
+    container_name: vocard
+    restart: unless-stopped
+    volumes:
+      - ./live/settings.json:/app/settings.json
+      - ./patches/app/cogs/task.py:/app/cogs/task.py
+    depends_on:
+      lavalink:
+        condition: service_healthy
+      vocard-dashboard:
+        condition: service_healthy
+      vocard-db:
+        condition: service_healthy
+    networks:
+      - vocard
+    logging: *logging

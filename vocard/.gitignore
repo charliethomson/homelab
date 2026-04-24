@@ -1,0 +1,5 @@
+.env
+live/
+mongodb_data/
+lavalink/logs/
+lavalink/plugins/
