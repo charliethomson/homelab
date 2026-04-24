@@ -1,0 +1,49 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'vms'
+    static_configs:
+      - targets: ['192.168.0.87:9100']
+        labels:
+          instance: 'game.thmsn.local'
+
+      - targets: ['192.168.0.193:9100']
+        labels:
+          instance: 'dev.thmsn.local'
+
+      - targets: ['192.168.0.33:9100']
+        labels:
+          instance: 'ttr.thmsn.local'
+
+      - targets: ['192.168.0.12:9100']
+        labels:
+          instance: 'agent-1.thmsn.local'
+
+      - targets: ['192.168.0.201:9100']
+        labels:
+          instance: 'agent-2.thmsn.local'
+
+      - targets: ['192.168.0.62:9100']
+        labels:
+          instance: 'fs.thmsn.local'
+
+  - job_name: 'ha'
+    scrape_interval: 60s
+    metrics_path: /api/prometheus
+    bearer_token_file: /etc/prometheus/ha_token
+    static_configs:
+      - targets: ['192.168.0.114:8123']
+        labels:
+          instance: 'ha.thmsn.local'
+  - job_name: 'ttr'
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ['ttr.lan.thmsn.dev']
+        labels:
+          instance: 'ttr.thmsn.local'
