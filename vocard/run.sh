@@ -9,6 +9,7 @@ cd "$(dirname "$0")"
 set -a; . ./.env; set +a
 
 mkdir -p live/dashboard live/lavalink
+mkdir -p lavalink/plugins lavalink/logs && chmod 777 lavalink/plugins lavalink/logs
 
 envsubst < settings.json          > live/settings.json
 envsubst < dashboard/settings.json > live/dashboard/settings.json
