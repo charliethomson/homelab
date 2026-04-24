@@ -98,9 +98,9 @@ services:
     container_name: sonarr
     environment:
       <<: *arr-env
-      SONARR__APIKEY: ${SONARR_API_KEY}
-      SONARR__AUTHENTICATIONMETHOD: Forms
-      SONARR__AUTHENTICATIONREQUIRED: Enabled
+      SONARR__AUTH__APIKEY: ${SONARR_API_KEY}
+      SONARR__AUTH__METHOD: Forms
+      SONARR__AUTH__REQUIRED: Enabled
     volumes:
       - ./config/sonarr:/config
       - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
