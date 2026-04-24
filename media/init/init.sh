@@ -10,10 +10,10 @@ MAX_WAIT=300
 
 wait_for() {
     name=$1
-    url=$2
+    status_url=$2
     key=$3
     elapsed=0
-    until curl -sf -H "X-Api-Key: $key" "$url/api/v1/system/status" >/dev/null 2>&1; do
+    until curl -sf -H "X-Api-Key: $key" "$status_url" >/dev/null 2>&1; do
         [ "$elapsed" -ge "$MAX_WAIT" ] && { echo "$name: timed out" >&2; exit 1; }
         echo "$name: not ready, retrying in 3s (${elapsed}s elapsed)"
         sleep 3
@@ -41,10 +41,10 @@ prowlarr_add_app() {
     echo "Prowlarr: added $name"
 }
 
-wait_for prowlarr "$PROWLARR_URL" "$PROWLARR_API_KEY"
-wait_for sonarr   "$SONARR_URL"   "$SONARR_API_KEY"
-wait_for radarr   "$RADARR_URL"   "$RADARR_API_KEY"
-wait_for lidarr   "$LIDARR_URL"   "$LIDARR_API_KEY"
+wait_for prowlarr "$PROWLARR_URL/api/v1/system/status" "$PROWLARR_API_KEY"
+wait_for sonarr   "$SONARR_URL/api/v3/system/status"  "$SONARR_API_KEY"
+wait_for radarr   "$RADARR_URL/api/v3/system/status"  "$RADARR_API_KEY"
+wait_for lidarr   "$LIDARR_URL/api/v1/system/status"  "$LIDARR_API_KEY"
 
 prowlarr_add_app Sonarr "$(jq -n \
     --arg baseUrl "http://sonarr:8989" \
