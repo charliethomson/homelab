@@ -83,9 +83,9 @@ services:
     container_name: prowlarr
     environment:
       <<: *arr-env
-      PROWLARR__APIKEY: ${PROWLARR_API_KEY}
-      PROWLARR__AUTHENTICATIONMETHOD: Forms
-      PROWLARR__AUTHENTICATIONREQUIRED: Enabled
+      PROWLARR__AUTH__APIKEY: ${PROWLARR_API_KEY}
+      PROWLARR__AUTH__METHOD: Forms
+      PROWLARR__AUTH__REQUIRED: Enabled
     volumes:
       - ./config/prowlarr:/config
     ports:
