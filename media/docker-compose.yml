@@ -66,9 +66,9 @@ services:
     container_name: lidarr
     environment:
       <<: *arr-env
-      LIDARR__AUTH__APIKEY: ${LIDARR_API_KEY}
-      LIDARR__AUTH__METHOD: Forms
-      LIDARR__AUTH__REQUIRED: Enabled
+      LIDARR__APIKEY: ${LIDARR_API_KEY}
+      LIDARR__AUTHENTICATIONMETHOD: Forms
+      LIDARR__AUTHENTICATIONREQUIRED: Enabled
     volumes:
       - ./config/lidarr:/config
       - /mnt/truenas/Files/08 - Music:/music
@@ -83,9 +83,9 @@ services:
     container_name: prowlarr
     environment:
       <<: *arr-env
-      PROWLARR__AUTH__APIKEY: ${PROWLARR_API_KEY}
-      PROWLARR__AUTH__METHOD: Forms
-      PROWLARR__AUTH__REQUIRED: Enabled
+      PROWLARR__APIKEY: ${PROWLARR_API_KEY}
+      PROWLARR__AUTHENTICATIONMETHOD: Forms
+      PROWLARR__AUTHENTICATIONREQUIRED: Enabled
     volumes:
       - ./config/prowlarr:/config
     ports:
@@ -98,9 +98,9 @@ services:
     container_name: sonarr
     environment:
       <<: *arr-env
-      SONARR__AUTH__APIKEY: ${SONARR_API_KEY}
-      SONARR__AUTH__METHOD: Forms
-      SONARR__AUTH__REQUIRED: Enabled
+      SONARR__APIKEY: ${SONARR_API_KEY}
+      SONARR__AUTHENTICATIONMETHOD: Forms
+      SONARR__AUTHENTICATIONREQUIRED: Enabled
     volumes:
       - ./config/sonarr:/config
       - /mnt/truenas/Files/04 - Anime/02 - Shows:/tv
@@ -115,9 +115,9 @@ services:
     container_name: radarr
     environment:
       <<: *arr-env
-      RADARR__AUTH__APIKEY: ${RADARR_API_KEY}
-      RADARR__AUTH__METHOD: Forms
-      RADARR__AUTH__REQUIRED: Enabled
+      RADARR__APIKEY: ${RADARR_API_KEY}
+      RADARR__AUTHENTICATIONMETHOD: Forms
+      RADARR__AUTHENTICATIONREQUIRED: Enabled
     volumes:
       - ./config/radarr:/config
       - /mnt/truenas/Files/04 - Anime/04 - Movies:/movies
