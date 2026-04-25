@@ -21,6 +21,7 @@ services:
       WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
       SERVER_COUNTRIES: United States
       VPN_PORT_FORWARDING: "on"
+      HTTPPROXY: "on"
     ports:
       - 8080:8080
       - 6881:6881
