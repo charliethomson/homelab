@@ -41,7 +41,6 @@ services:
       <<: *arr-env
       WEBUI_PORT: "8080"
       TORRENTING_PORT: "6881"
-      DOCKER_MODS: ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
     volumes:
       - ./config/qbittorrent:/config
       - /mnt/truenas/Files/10 - Downloads:/downloads
@@ -49,6 +48,17 @@ services:
     depends_on:
       gluetun:
         condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  flood:
+    image: jesec/flood:latest
+    container_name: flood
+    command: --auth none --qburl http://gluetun:8080 --qbuser ${QB_USER:-admin} --qbpass ${QB_PASS:-adminadmin}
+    ports:
+      - 3000:3000
+    depends_on:
+      - qbittorrent
     restart: unless-stopped
     logging: *logging
 
