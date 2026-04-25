@@ -103,6 +103,7 @@ services:
       SLSKD_SLSK_USERNAME: ${SLSKD_USERNAME}
       SLSKD_SLSK_PASSWORD: ${SLSKD_PASSWORD}
       SLSKD_APP_DIR: /app
+      SLSKD_REMOTE_CONFIGURATION: true
     volumes:
       - ./config/slskd:/app
       - /mnt/truenas/Files/10 - Downloads:/downloads
