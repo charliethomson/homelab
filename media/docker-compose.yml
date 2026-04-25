@@ -56,7 +56,7 @@ services:
     container_name: flood
     command: --auth none --qburl http://gluetun:8080 --qbuser ${QB_USER:-admin} --qbpass ${QB_PASS:-adminadmin}
     ports:
-      - 3000:3000
+      - 3001:3000
     depends_on:
       - qbittorrent
     restart: unless-stopped
