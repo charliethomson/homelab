@@ -27,6 +27,7 @@ services:
       - 6881:6881
       - 6881:6881/udp
       - 8191:8191
+      - 5030:5030
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
@@ -88,6 +89,23 @@ services:
     environment:
       LOG_LEVEL: info
       TZ: America/New_York
+    network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  slskd:
+    image: slskd/slskd:latest
+    container_name: slskd
+    environment:
+      SLSKD_SLSK_USERNAME: ${SLSKD_USERNAME}
+      SLSKD_SLSK_PASSWORD: ${SLSKD_PASSWORD}
+      SLSKD_APP_DIR: /app
+    volumes:
+      - ./config/slskd:/app
+      - /mnt/truenas/Files/10 - Downloads:/downloads
     network_mode: "service:gluetun"
     depends_on:
       gluetun:
