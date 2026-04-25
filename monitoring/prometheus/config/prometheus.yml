@@ -47,3 +47,23 @@ scrape_configs:
       - targets: ['ttr.lan.thmsn.dev']
         labels:
           instance: 'ttr.thmsn.local'
+
+  - job_name: 'exportarr'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['192.168.0.193:9707']
+        labels:
+          app: sonarr
+      - targets: ['192.168.0.193:9708']
+        labels:
+          app: radarr
+      - targets: ['192.168.0.193:9709']
+        labels:
+          app: lidarr
+      - targets: ['192.168.0.193:9710']
+        labels:
+          app: prowlarr
+
+  - job_name: 'qbittorrent'
+    static_configs:
+      - targets: ['192.168.0.193:8000']

@@ -3,6 +3,15 @@ x-arr-env: &arr-env
   PGID: "3000"
   TZ: America/New_York
 
+x-exportarr: &exportarr
+  image: ghcr.io/onedr0p/exportarr:latest
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
 x-logging: &logging
   driver: json-file
   options:
@@ -110,6 +119,74 @@ services:
       - /mnt/truenas/Files/10 - Downloads:/downloads
       - /mnt/truenas/Files/08 - Music:/music:ro
     network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  exportarr-sonarr:
+    <<: *exportarr
+    container_name: exportarr-sonarr
+    command: sonarr
+    environment:
+      PORT: "9707"
+      URL: http://sonarr:8989
+      API_KEY: ${SONARR_API_KEY}
+    ports:
+      - 9707:9707
+    depends_on:
+      - sonarr
+
+  exportarr-radarr:
+    <<: *exportarr
+    container_name: exportarr-radarr
+    command: radarr
+    environment:
+      PORT: "9708"
+      URL: http://radarr:7878
+      API_KEY: ${RADARR_API_KEY}
+    ports:
+      - 9708:9708
+    depends_on:
+      - radarr
+
+  exportarr-lidarr:
+    <<: *exportarr
+    container_name: exportarr-lidarr
+    command: lidarr
+    environment:
+      PORT: "9709"
+      URL: http://lidarr:8686
+      API_KEY: ${LIDARR_API_KEY}
+    ports:
+      - 9709:9709
+    depends_on:
+      - lidarr
+
+  exportarr-prowlarr:
+    <<: *exportarr
+    container_name: exportarr-prowlarr
+    command: prowlarr
+    environment:
+      PORT: "9710"
+      URL: http://prowlarr:9696
+      API_KEY: ${PROWLARR_API_KEY}
+    ports:
+      - 9710:9710
+    depends_on:
+      - prowlarr
+
+  qbittorrent-exporter:
+    image: ghcr.io/esanchezm/prometheus-qbittorrent-exporter:latest
+    container_name: qbittorrent-exporter
+    environment:
+      QBITTORRENT_HOST: gluetun
+      QBITTORRENT_PORT: "8080"
+      QBITTORRENT_USER: ${QB_USER:-admin}
+      QBITTORRENT_PASS: ${QB_PASS:-adminadmin}
+    ports:
+      - 8000:8000
     depends_on:
       gluetun:
         condition: service_healthy
