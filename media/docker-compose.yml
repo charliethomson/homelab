@@ -116,7 +116,7 @@ services:
     logging: *logging
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
+    image: lscr.io/linuxserver/lidarr:develop
     container_name: lidarr
     environment:
       <<: *arr-env
