@@ -106,6 +106,7 @@ services:
     volumes:
       - ./config/slskd:/app
       - /mnt/truenas/Files/10 - Downloads:/downloads
+      - /mnt/truenas/Files/08 - Music:/music:ro
     network_mode: "service:gluetun"
     depends_on:
       gluetun:
