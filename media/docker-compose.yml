@@ -116,6 +116,19 @@ services:
     restart: unless-stopped
     logging: *logging
 
+  pinchflat:
+    image: ghcr.io/kieraneglin/pinchflat:latest
+    container_name: pinchflat
+    environment:
+      TZ: America/New_York
+    volumes:
+      - ./config/pinchflat:/config
+      - /mnt/truenas/Files/09 - Youtubes:/downloads
+    ports:
+      - 8945:8945
+    restart: unless-stopped
+    logging: *logging
+
   soularr:
     image: mrusse08/soularr:latest
     container_name: soularr
