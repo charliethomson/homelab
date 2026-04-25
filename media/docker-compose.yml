@@ -26,6 +26,7 @@ services:
       - 8080:8080
       - 6881:6881
       - 6881:6881/udp
+      - 8191:8191
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
@@ -87,8 +88,10 @@ services:
     environment:
       LOG_LEVEL: info
       TZ: America/New_York
-    ports:
-      - 8191:8191
+    network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_healthy
     restart: unless-stopped
     logging: *logging
 
