@@ -104,6 +104,7 @@ services:
       SLSKD_SLSK_PASSWORD: ${SLSKD_PASSWORD}
       SLSKD_APP_DIR: /app
       SLSKD_REMOTE_CONFIGURATION: true
+      SLSKD_API_KEYS: ${SLSKD_API_KEY}
     volumes:
       - ./config/slskd:/app
       - /mnt/truenas/Files/10 - Downloads:/downloads
@@ -115,8 +116,25 @@ services:
     restart: unless-stopped
     logging: *logging
 
+  soularr:
+    image: mrusse08/soularr:latest
+    container_name: soularr
+    environment:
+      PUID: "3000"
+      PGID: "3000"
+      TZ: America/New_York
+      SCRIPT_INTERVAL: "300"
+    volumes:
+      - ./soularr:/data
+      - /mnt/truenas/Files/10 - Downloads:/downloads
+    depends_on:
+      - lidarr
+      - slskd
+    restart: unless-stopped
+    logging: *logging
+
   lidarr:
-    image: lscr.io/linuxserver/lidarr:develop
+    image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
     environment:
       <<: *arr-env
