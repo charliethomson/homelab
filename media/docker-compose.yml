@@ -186,7 +186,7 @@ services:
       QBITTORRENT_USER: ${QB_USER:-admin}
       QBITTORRENT_PASS: ${QB_PASS:-adminadmin}
     ports:
-      - 8000:8000
+      - 9177:8000
     depends_on:
       gluetun:
         condition: service_healthy

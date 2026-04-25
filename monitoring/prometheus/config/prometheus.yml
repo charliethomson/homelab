@@ -66,4 +66,4 @@ scrape_configs:
 
   - job_name: 'qbittorrent'
     static_configs:
-      - targets: ['192.168.0.193:8000']
+      - targets: ['192.168.0.193:9177']
