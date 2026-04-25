@@ -20,6 +20,7 @@ services:
       VPN_TYPE: wireguard
       WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
       SERVER_COUNTRIES: United States
+      VPN_PORT_FORWARDING: "on"
     ports:
       - 8080:8080
       - 6881:6881
@@ -47,6 +48,24 @@ services:
     depends_on:
       gluetun:
         condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  port-updater:
+    image: alpine:3
+    container_name: port-updater
+    command: sh /scripts/port-updater.sh
+    environment:
+      QB_USER: ${QB_USER:-admin}
+      QB_PASS: ${QB_PASS:-adminadmin}
+    volumes:
+      - ./init/port-updater.sh:/scripts/port-updater.sh:ro
+    network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_started
     restart: unless-stopped
     logging: *logging
 
