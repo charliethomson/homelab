@@ -61,6 +61,12 @@ services:
       gluetun:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/api/v2/transfer/info | grep -qE '\"dht_nodes\":[1-9]'"]
+      interval: 5m
+      timeout: 10s
+      start_period: 2m
+      retries: 3
     logging: *logging
 
   flood:
