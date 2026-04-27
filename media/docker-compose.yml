@@ -212,6 +212,20 @@ services:
     restart: unless-stopped
     logging: *logging
 
+  metube:
+    image: ghcr.io/alexta69/metube:latest
+    container_name: metube
+    environment:
+      UID: "3000"
+      GID: "3000"
+      TZ: America/New_York
+    volumes:
+      - /mnt/truenas/Files/02 - Media/03 - MeTube:/downloads
+    ports:
+      - 8081:8081
+    restart: unless-stopped
+    logging: *logging
+
   soularr:
     image: mrusse08/soularr:latest
     container_name: soularr

@@ -102,6 +102,14 @@ pinchflat.dev.lan.thmsn.dev, pinchflat.dev.vpn.thmsn.dev {
     reverse_proxy localhost:8945
 }
 
+metube.dev.lan.thmsn.dev, metube.dev.vpn.thmsn.dev {
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+        resolvers 1.1.1.1 8.8.8.8
+    }
+    reverse_proxy localhost:8081
+}
+
 slskd.dev.lan.thmsn.dev, slskd.dev.vpn.thmsn.dev {
     tls {
         dns cloudflare {env.CF_API_TOKEN}
