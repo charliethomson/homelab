@@ -1,0 +1,25 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+name: cobalt
+
+services:
+  cobalt-api:
+    image: ghcr.io/imputnet/cobalt:11
+    container_name: cobalt-api
+    init: true
+    read_only: true
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    environment:
+      API_URL: ${API_URL}
+      API_PORT: "9000"
+      API_AUTH_REQUIRED: "1"
+      API_KEY_URL: "file:///keys/keys.json"
+    volumes:
+      - ./live/keys.json:/keys/keys.json:ro
+    logging: *logging

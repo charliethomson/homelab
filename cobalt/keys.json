@@ -1,0 +1,6 @@
+{
+  "${COBALT_API_KEY}": {
+    "name": "default",
+    "limit": "unlimited"
+  }
+}
